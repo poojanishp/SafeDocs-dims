@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  otp        String?
+  otpExpiry  DateTime?
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  documents       Document[]
+  passwords       Password[]
+  emergencyContacts EmergencyContact[]
+  reminders       Reminder[]
+  familyMembers   FamilyMember[]
+}
+
+model PendingRegistration {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  otp       String
+  otpExpiry DateTime
+  createdAt DateTime @default(now())
+}
+
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  fileUrl   String
+  category  String
+  tags      String?  // Comma-separated or JSON string
+  expiryDate DateTime?
+  createdAt DateTime @default(now())
+  
+  reminders       Reminder[]
+  sharedLinks     SharedLink[]
+}
+
+model Password {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  site      String
+  username  String
+  encryptedPassword String
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Reminder {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  docId     Int?
+  document  Document? @relation(fields: [docId], references: [id])
+  type      String   // "Document", "General"
+  date      DateTime
+  time      String?
+  note      String?
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+}
+
+model SharedLink {
+  id        Int      @id @default(autoincrement())
+  docId     Int
+  document  Document @relation(fields: [docId], references: [id])
+  token     String   @unique
+  expiry    DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+
+model FamilyMember {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  name      String?
+  mobile    String
+  relation  String?
+  accessLevel String @default("View")
+  status    String   @default("Pending")
+  createdAt DateTime @default(now())
+}
+
+model EmergencyContact {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  email     String
+  phone     String
+  relation  String
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  details   String?
+  timestamp DateTime @default(now())
+}
