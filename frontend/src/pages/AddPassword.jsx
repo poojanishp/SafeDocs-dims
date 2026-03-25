@@ -19,7 +19,11 @@ function AddPassword() {
       navigate("/passwordvault");
     } catch (err) {
       console.error(err);
+<<<<<<< HEAD
       alert(err?.response?.data?.message || "Failed to save password");
+=======
+      alert("Failed to save password");
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
     }
   };
   return (

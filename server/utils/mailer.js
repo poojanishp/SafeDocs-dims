@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+<<<<<<< HEAD
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -24,16 +25,24 @@ const withMailError = (error) => {
   const details = [error?.code, error?.responseCode, error?.response].filter(Boolean).join(" | ");
   throw new Error(`Failed to send email${details ? `: ${details}` : ""}`);
 };
+=======
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
 
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
+<<<<<<< HEAD
     user: MAIL_USER,
     pass: MAIL_PASS,
+=======
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
   },
 });
 
 export const sendOtpMail = async (to, otp) => {
+<<<<<<< HEAD
   assertMailConfig();
   const subject = "Your OTP for Safedocs";
   const html = `<h2>Your OTP is: ${otp}</h2><p>This OTP is valid for 10 minutes.</p>`;
@@ -76,4 +85,33 @@ export const sendHtmlMail = async (to, subject, html) => {
   } catch (error) {
     withMailError(error);
   }
+=======
+  const subject = "Your OTP for Safedocs";
+  const html = `<h2>Your OTP is: ${otp}</h2><p>This OTP is valid for 10 minutes.</p>`;
+
+  await transporter.sendMail({
+    from: process.env.MAIL_USER,
+    to,
+    subject,
+    html,
+  });
+};
+
+export const sendCustomOtpMail = async (to, otp, subject, html) => {
+  await transporter.sendMail({
+    from: process.env.MAIL_USER,
+    to,
+    subject,
+    html: html || `<h2>Your OTP is: ${otp}</h2><p>This OTP is valid for 10 minutes.</p>`,
+  });
+};
+
+export const sendHtmlMail = async (to, subject, html) => {
+  await transporter.sendMail({
+    from: process.env.MAIL_USER,
+    to,
+    subject,
+    html,
+  });
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
 };

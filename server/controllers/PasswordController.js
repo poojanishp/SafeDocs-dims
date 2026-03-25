@@ -7,6 +7,7 @@ export const addPassword = async (req, res) => {
         const { site, username, password, notes } = req.body;
         const userId = req.userId;
 
+<<<<<<< HEAD
         const normalizedSite = String(site || "").trim();
         const normalizedUsername = String(username || "").trim();
         const rawPassword = String(password || "");
@@ -17,12 +18,16 @@ export const addPassword = async (req, res) => {
         }
 
         const encrypted = encrypt(rawPassword);
+=======
+        const encrypted = encrypt(password);
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
         // Store as JSON string: {"iv": "...", "content": "..."}
         const encryptedString = JSON.stringify(encrypted);
 
         const newEntry = await prisma.password.create({
             data: {
                 userId,
+<<<<<<< HEAD
                 site: normalizedSite,
                 username: normalizedUsername,
                 encryptedPassword: encryptedString,
@@ -31,11 +36,25 @@ export const addPassword = async (req, res) => {
         });
 
         await createAuditLog(userId, "ADD_PASSWORD", `Added password for ${normalizedSite}`);
+=======
+                site,
+                username,
+                encryptedPassword: encryptedString,
+                notes,
+            },
+        });
+
+        await createAuditLog(userId, "ADD_PASSWORD", `Added password for ${site}`);
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
 
         res.status(201).json(newEntry);
     } catch (error) {
         console.error("Add password error:", error);
+<<<<<<< HEAD
         res.status(500).json({ message: error?.message || "Server error" });
+=======
+        res.status(500).json({ message: "Server error" });
+>>>>>>> 60b5bf141b6f4391bc131bdc8477845e9af8d43d
     }
 };
 
